@@ -42,13 +42,12 @@ get_student_email() {
         return
     fi
 
-    # Si ya existe el archivo con el correo, lo carga
+    # Si no existe la variable, verificar archivo
     if [[ -f "$email_file" && -s "$email_file" ]]; then
         STUDENT_EMAIL=$(cat "$email_file")
-        USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
         echo "Usando correo previamente guardado: $STUDENT_EMAIL" | tee -a "$LOG_FILE"
     else
-        # Si no existe el archivo o variable, solicita el correo
+        # Solicitar el correo si no hay variable ni archivo
         echo -n "Ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
         read STUDENT_EMAIL
         if [[ ! "$STUDENT_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@vallegrande\.edu\.pe$ ]]; then
@@ -60,6 +59,7 @@ get_student_email() {
         echo "Correo guardado para futuras ejecuciones." | tee -a "$LOG_FILE"
     fi
 }
+
 
 
 
