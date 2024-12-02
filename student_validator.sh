@@ -32,9 +32,15 @@ validate_internet() {
     fi
 }
 
-# Pedir y guardar el correo solo la primera vez
 get_student_email() {
     local email_file="$HOME/.student_email"
+
+    # Priorizar variable de entorno
+    if [[ -n "$STUDENT_EMAIL" ]]; then
+        echo "Usando correo de la variable de entorno: $STUDENT_EMAIL"
+        USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+        return
+    fi
 
     # Si ya existe el archivo con el correo, lo carga
     if [[ -f "$email_file" && -s "$email_file" ]]; then
@@ -42,7 +48,7 @@ get_student_email() {
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
         echo "Usando correo previamente guardado: $STUDENT_EMAIL" | tee -a "$LOG_FILE"
     else
-        # Si no existe el archivo o está vacío, pide el correo
+        # Si no existe el archivo o variable, solicita el correo
         echo -n "Ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
         read STUDENT_EMAIL
         if [[ ! "$STUDENT_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@vallegrande\.edu\.pe$ ]]; then
@@ -54,6 +60,7 @@ get_student_email() {
         echo "Correo guardado para futuras ejecuciones." | tee -a "$LOG_FILE"
     fi
 }
+
 
 
 # Validar la fase proporcionada
