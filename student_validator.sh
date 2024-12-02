@@ -90,8 +90,8 @@ download_validator() {
         exit 1
     fi
 
-    # Decodificar el archivo usando la opción detectada
-    base64 $BASE64_DECODE -i "$TEMP_DIR/$encoded_file" -o "$TEMP_DIR/validator.sh"
+    # Decodificar el archivo usando redirección estándar
+    base64 $BASE64_DECODE -i "$TEMP_DIR/$encoded_file" > "$TEMP_DIR/validator.sh"
     chmod +x "$TEMP_DIR/validator.sh"
 }
 
