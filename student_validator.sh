@@ -14,7 +14,7 @@ STUDENT_EMAIL=$STUDENT_EMAIL
 USER_NAME=""
 FASE=""
 
-
+#Test
 # Función para limpiar archivos temporales
 cleanup() {
     echo "Limpiando archivos temporales..." | tee -a "$LOG_FILE"
