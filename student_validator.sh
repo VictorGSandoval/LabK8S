@@ -10,7 +10,7 @@ TEMP_DIR="/tmp/validator_temp"
 LOG_FILE="/tmp/validator_log.txt"
 
 # Variables para el correo y nombre del estudiante
-STUDENT_EMAIL=""
+STUDENT_EMAIL=$STUDENT_EMAIL
 USER_NAME=""
 FASE=""
 
