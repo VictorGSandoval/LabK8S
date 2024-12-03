@@ -33,30 +33,21 @@ validate_internet() {
 }
 
 get_student_email() {
-    local email_file="$HOME/.student_email"
-
-    # Priorizar variable de entorno
+    # Validar si la variable de entorno STUDENT_EMAIL está configurada
     if [[ -n "$STUDENT_EMAIL" ]]; then
-        echo "Usando correo de la variable de entorno: $STUDENT_EMAIL"
+        echo "✔ Usando correo de la variable de entorno: $STUDENT_EMAIL"
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
-        return
-    fi
-
-    # Si no existe la variable, verificar archivo
-    if [[ -f "$email_file" && -s "$email_file" ]]; then
-        STUDENT_EMAIL=$(cat "$email_file")
-        echo "Usando correo previamente guardado: $STUDENT_EMAIL" | tee -a "$LOG_FILE"
     else
-        # Solicitar el correo si no hay variable ni archivo
-        echo -n "Ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
+        # Solicitar el correo si no está configurado en la variable de entorno
+        echo "⚠ Error: La variable de entorno STUDENT_EMAIL no está configurada."
+        echo -n "✏ Por favor, ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
         read STUDENT_EMAIL
         if [[ ! "$STUDENT_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@vallegrande\.edu\.pe$ ]]; then
-            echo "Error: El correo debe ser válido y del dominio vallegrande.edu.pe." | tee -a "$LOG_FILE"
+            echo "❌ Error: El correo debe ser válido y del dominio vallegrande.edu.pe."
             exit 1
         fi
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
-        echo "$STUDENT_EMAIL" > "$email_file"
-        echo "Correo guardado para futuras ejecuciones." | tee -a "$LOG_FILE"
+        echo "✔ Correo proporcionado: $STUDENT_EMAIL"
     fi
 }
 
