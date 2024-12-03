@@ -49,6 +49,8 @@ get_student_email() {
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
         echo "🟢 [INFO] Correo proporcionado y procesado: $STUDENT_EMAIL"
     fi
+   echo "Variables de entorno disponibles:"
+   printenv
 }
 
 
