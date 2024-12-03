@@ -35,19 +35,19 @@ validate_internet() {
 get_student_email() {
     # Validar si la variable de entorno STUDENT_EMAIL está configurada
     if [[ -n "$STUDENT_EMAIL" ]]; then
-        echo "✔ Usando correo de la variable de entorno: $STUDENT_EMAIL"
+        echo "🟢 [INFO] Usando correo desde variable de entorno: $STUDENT_EMAIL"
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
     else
         # Solicitar el correo si no está configurado en la variable de entorno
-        echo "⚠ Error: La variable de entorno STUDENT_EMAIL no está configurada."
-        echo -n "✏ Por favor, ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
+        echo "🔴 [ERROR] La variable de entorno STUDENT_EMAIL no está configurada."
+        echo -n "✏ [INPUT] Por favor, ingresa tu correo institucional (terminado en vallegrande.edu.pe): "
         read STUDENT_EMAIL
         if [[ ! "$STUDENT_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@vallegrande\.edu\.pe$ ]]; then
-            echo "❌ Error: El correo debe ser válido y del dominio vallegrande.edu.pe."
+            echo "❌ [ERROR] El correo debe ser válido y del dominio vallegrande.edu.pe."
             exit 1
         fi
         USER_NAME=$(echo "$STUDENT_EMAIL" | cut -d'@' -f1 | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
-        echo "✔ Correo proporcionado: $STUDENT_EMAIL"
+        echo "🟢 [INFO] Correo proporcionado y procesado: $STUDENT_EMAIL"
     fi
 }
 
