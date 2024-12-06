@@ -12,7 +12,7 @@ LOG_FILE="/tmp/validator_log.txt"
 # Variables para el correo y nombre del estudiante
 STUDENT_EMAIL=$STUDENT_EMAIL
 USER_NAME=""
-FASE=""
+FASE=$FASE
 
 #Test
 # Función para limpiar archivos temporales
@@ -98,15 +98,21 @@ get_student_email() {
 
 
 
-# Validar la fase proporcionada
 get_fase() {
-    echo -n "Ingresa la fase que deseas validar (1, 2 o 3): "
-    read FASE
-    if [[ "$FASE" != "1" && "$FASE" != "2" && "$FASE" != "3" ]]; then
-        echo "Error: La fase debe ser 1, 2 o 3." | tee -a "$LOG_FILE"
-        exit 1
+    # Verificar si FASE está configurada como variable de entorno y es válida
+    if [[ -n "$FASE" && ( "$FASE" == "1" || "$FASE" == "2" || "$FASE" == "3" ) ]]; then
+        echo "Usando la fase proporcionada en la variable de entorno: FASE=$FASE"
+    else
+        # Solicitar al usuario que introduzca la fase si no está configurada o es inválida
+        echo -n "Ingresa la fase que deseas validar (1, 2 o 3): "
+        read FASE
+        if [[ "$FASE" != "1" && "$FASE" != "2" && "$FASE" != "3" ]]; then
+            echo "Error: La fase debe ser 1, 2 o 3." | tee -a "$LOG_FILE"
+            exit 1
+        fi
     fi
 }
+
 
 # Detectar compatibilidad con base64
 detect_base64_option() {
