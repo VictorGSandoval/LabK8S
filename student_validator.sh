@@ -27,11 +27,52 @@ trap 'cleanup; echo "Error crítico: terminando ejecución."; exit 1' ERR
 # Validar conexión a internet
 validate_internet() {
     echo "Validando conexión a internet..." | tee -a "$LOG_FILE"
-    if ! ping -c 1 8.8.8.8 > /dev/null 2>&1; then
-        echo "Error: No hay conexión a internet." | tee -a "$LOG_FILE"
-        exit 1
+
+    # Intentar con ping a 8.8.8.8
+    if command -v ping > /dev/null 2>&1; then
+        if ping -c 1 -W 2 8.8.8.8 > /dev/null 2>&1; then
+            echo "Conexión a internet verificada con ping." | tee -a "$LOG_FILE"
+            return 0
+        fi
     fi
+
+    # Intentar con ping a google.com
+    if command -v ping > /dev/null 2>&1; then
+        if ping -c 1 -W 2 www.google.com > /dev/null 2>&1; then
+            echo "Conexión a internet verificada con ping a www.google.com." | tee -a "$LOG_FILE"
+            return 0
+        fi
+    fi
+
+    # Validar conexión con /dev/tcp
+    if [ -e /dev/tcp/8.8.8.8/53 ]; then
+        echo > /dev/tcp/8.8.8.8/53 && {
+            echo "Conexión a internet verificada mediante /dev/tcp." | tee -a "$LOG_FILE"
+            return 0
+        }
+    fi
+
+    # Intentar con wget
+    if command -v wget > /dev/null 2>&1; then
+        if wget -q --spider http://www.google.com; then
+            echo "Conexión a internet verificada con wget." | tee -a "$LOG_FILE"
+            return 0
+        fi
+    fi
+
+    # Intentar con curl
+    if command -v curl > /dev/null 2>&1; then
+        if curl -s --head http://www.google.com | head -n 1 | grep "HTTP/1.[01] [23].." > /dev/null; then
+            echo "Conexión a internet verificada con curl." | tee -a "$LOG_FILE"
+            return 0
+        fi
+    fi
+
+    # Si ninguno funciona
+    echo "Error: No hay conexión a internet." | tee -a "$LOG_FILE"
+    exit 1
 }
+
 
 get_student_email() {
     # Validar si la variable de entorno STUDENT_EMAIL está configurada
