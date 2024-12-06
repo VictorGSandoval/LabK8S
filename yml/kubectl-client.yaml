@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubectl-client
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubectl-client
+  template:
+    metadata:
+      labels:
+        app: kubectl-client
+    spec:
+      serviceAccountName: kubectl-access
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+          - /bin/bash
+          - -c
+          - |
+            apt-get update && apt-get install -y curl && \
+            curl -O https://raw.githubusercontent.com/VictorGSandoval/LabK8S/main/student_validator.sh && \
+            bash student_validator.sh
+        env:
+        - name: STUDENT_EMAIL
+          value: "{{STUDENT_EMAIL}}"
+        - name: PUERTO_BACKEND_ENV
+          value: "{{PUERTO_BACKEND_ENV}}"
+        - name: PUERTO_FRONTEND_ENV
+          value: "{{PUERTO_FRONTEND_ENV}}"
+        - name: FASE
+          value: "2"
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
